@@ -1,0 +1,15 @@
+[Unit]
+Description=myapp service
+After=network.target
+StartLimitIntervalSec=1
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=ubuntu
+ExecStart=/opt/webapp/server
+EnvironmentFile=/opt/webapp/env_file.conf
+
+[Install]
+WantedBy=multi-user.target
