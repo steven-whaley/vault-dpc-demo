@@ -27,3 +27,18 @@ variable "vault_addr" {
     type = string
     description = "The private address of the Vault server"
 }
+
+variable "hcp_client_id" {
+    type = string
+    description = "The client ID to use in the HCP provider"
+}
+
+variable "hcp_client_secret" {
+    type = string
+    description = "The client secret to use in the HCP provider"
+}
+
+variable "db_address" {
+  type = string
+  description = "The address of the database instance to connect to myapp server to"
+}

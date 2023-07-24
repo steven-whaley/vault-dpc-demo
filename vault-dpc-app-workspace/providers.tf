@@ -8,6 +8,10 @@ terraform {
       version = "5.4.0"
       source  = "hashicorp/aws"
     }
+    hcp = {
+      source  = "hashicorp/hcp"
+      version = "0.66.0"
+    }
   }
   cloud {
     organization = "swhashi"
@@ -24,4 +28,9 @@ provider "vault" {
 
 provider "aws" {
     region = var.region
+}
+
+provider "hcp" {
+    client_id = var.hcp_client_id
+    client_secret = var.hcp_client_secret
 }

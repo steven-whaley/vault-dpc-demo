@@ -7,7 +7,7 @@ ${vault_pki_secret_backend_cert.myapp.ca_chain}
   env_file = <<EOH
 DB_USER=${data.vault_kv_secret_v2.db_creds.data.admin_username}
 DB_PASSWORD=${data.vault_kv_secret_v2.db_creds.data.admin_password}
-DB_HOST=${data.tfe_outputs.vault_dpc_instruqt_build.values.database_address}
+DB_HOST=${var.db_address}
   EOH
 
   cloudinit_config_myapp = {
@@ -46,10 +46,10 @@ data "cloudinit_config" "myapp" {
   }
 }
 
-resource "aws_key_pair" "myapp_server_key" {
-  key_name = "myapp_server_key"
-  public_key = var.public_key
-}
+# resource "aws_key_pair" "myapp_server_key" {
+#   key_name = "myapp_server_key"
+#   public_key = var.public_key
+# }
 
 resource "aws_instance" "myapp" {
   lifecycle {
@@ -60,9 +60,9 @@ resource "aws_instance" "myapp" {
   instance_type = "t3.micro"
 
   associate_public_ip_address = true
-  key_name                    = aws_key_pair.myapp_server_key.key_name
+  #key_name                    = aws_key_pair.myapp_server_key.key_name
   monitoring                  = true
-  subnet_id                   = data.tfe_outputs.vault_dpc_instruqt_build.values.ec2_subnet_id[0]
+  subnet_id                   = data.aws_subnets.subnet_id.ids[0]
   vpc_security_group_ids      = [module.myapp-sec-group.security_group_id]
   user_data_base64            = data.cloudinit_config.myapp.rendered
   user_data_replace_on_change = false
@@ -77,7 +77,7 @@ module "myapp-sec-group" {
   version = "5.1.0"
 
   name   = "myapp-sec-group"
-  vpc_id = data.tfe_outputs.vault_dpc_instruqt_build.values.vpc_id
+  vpc_id = data.aws_vpc.vpc_id.id
 
   egress_cidr_blocks = ["0.0.0.0/0"]
   egress_rules       = ["https-443-tcp", "http-80-tcp", "postgresql-tcp"]
@@ -104,8 +104,8 @@ module "myapp-sec-group" {
 }
 
 resource "vault_pki_secret_backend_cert" "myapp" {
-  backend     = data.tfe_outputs.vault_dpc_instruqt_build.values.pki_int_path
-  name        = data.tfe_outputs.vault_dpc_instruqt_build.values.pki_int_role
+  backend     = "pki_int"
+  name        = "server"
   ttl         = "72h"
   common_name = "myapp.swcloudlab.net"
 }

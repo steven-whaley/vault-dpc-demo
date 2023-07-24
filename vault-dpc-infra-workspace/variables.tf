@@ -13,14 +13,14 @@ variable "tfc_token" {
     description = "The token to use to configure the TFE provider"
 }
 
+variable "tfc_organization_name" {
+    type = string
+    description = "The organization name used to configure the TFC provider"
+}
+
 variable "vault_addr" {
     type = string
     description = "The public address of the Vault server"
-}
-
-variable "vault_priv_addr" {
-    type = string
-    description = "The private address of the Vault server"
 }
 
 variable "hvn_id" {

@@ -64,7 +64,7 @@ data "vault_policy_document" "vault_app_apply_policy" {
   }
   rule {
     path         = "${vault_mount.pki_int.path}/issue/${vault_pki_secret_backend_role.role.name}"
-    capabilities = ["read", "list"]
+    capabilities = ["read", "list", "create", "update"]
     description  = "Get PKI Certificate"
   }
 }
@@ -94,7 +94,7 @@ module "vault-dpc-app-workspace" {
     vault_apply_policy = data.vault_policy_document.vault_app_apply_policy.hcl
 
     # Set the policy to be used for the AWS user created by the aws secrets engine for this workspace
-    vault_aws_plan_policy_arns = [data.aws_iam_policy.ec2_read.arn, data.aws_iam_policy.vpc_read.arn]
-    vault_aws_apply_policy_arns = [data.aws_iam_policy.ec2_all.arn, data.aws_iam_policy.vpc_all.arn]
+    vault_aws_plan_policy_arns = [data.aws_iam_policy.ec2_read.arn, data.aws_iam_policy.vpc_read.arn, data.aws_iam_policy.rds_read.arn]
+    vault_aws_apply_policy_arns = [data.aws_iam_policy.ec2_all.arn]
     aws_secrets_backend = vault_aws_secret_backend.vault_aws.path
 }

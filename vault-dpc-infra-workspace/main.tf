@@ -6,6 +6,7 @@ resource "random_string" "db_password" {
 resource "random_string" "db_admin_name" {
     length = 8
     special = false
+    numeric = false
 }
 
 # Create VPC for AWS resources
@@ -24,6 +25,10 @@ module "vault-dpc-demo-vpc" {
   enable_nat_gateway   = true
   single_nat_gateway   = true
   enable_dns_hostnames = true
+
+  public_subnet_tags = {
+    Public = "Yes"
+  }
 }
 
 ### Create peering connection to Vault HVN 
@@ -92,6 +97,10 @@ resource "aws_db_instance" "postgres" {
   db_subnet_group_name   = aws_db_subnet_group.postgres.name
   skip_final_snapshot    = true
   vpc_security_group_ids = [module.rds-sec-group.security_group_id]
+
+  tags = {
+    Name = "myappdb"
+  }
 }
 
 #RDS Security Group
@@ -111,6 +120,7 @@ module "rds-sec-group" {
   ]
 }
 
+# Add Database username and password into Vault
 resource "vault_kv_secret_v2" "database_credentials" {
   mount               = "kv"
   name                = "database_credentials"
@@ -122,4 +132,12 @@ resource "vault_kv_secret_v2" "database_credentials" {
       admin_password = random_string.db_password.result
     }
   )
+}
+
+# Add DB address as variable to vault-dpc-app-workspace
+resource "tfe_variable" "db_address" {
+  key          = "db_address"
+  value        = aws_db_instance.postgres.address
+  category     = "terraform"
+  workspace_id = data.tfe_workspace.vault-dpc-app-workspace.id
 }

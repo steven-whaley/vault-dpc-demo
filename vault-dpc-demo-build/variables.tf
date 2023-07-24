@@ -27,8 +27,3 @@ variable "vault_addr" {
     type = string
     description = "The private address of the Vault server"
 }
-
-variable "vault_priv_addr" {
-    type = string
-    description = "The private address of the Vault server"
-}

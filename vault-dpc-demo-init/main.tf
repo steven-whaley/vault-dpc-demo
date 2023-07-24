@@ -40,13 +40,6 @@ resource "tfe_variable" "vault_addr" {
   variable_set_id = tfe_variable_set.vault-dpc-demo.id
 }
 
-resource "tfe_variable" "vault_priv_addr" {
-  key          = "vault_priv_addr"
-  value        = hcp_vault_cluster.vault-dpc-demo-cluster.vault_private_endpoint_url
-  category     = "terraform"
-  variable_set_id = tfe_variable_set.vault-dpc-demo.id
-}
-
 resource "tfe_variable" "tfc_hostname" {
   key          = "tfc_hostname"
   value        = var.tfc_hostname
@@ -109,6 +102,7 @@ resource "tfe_variable" "hcp_client_secret" {
   value        = var.hcp_client_secret
   category     = "terraform"
   variable_set_id = tfe_variable_set.vault-dpc-demo.id
+  sensitive = true
 }
 
 # Add variable set to project
