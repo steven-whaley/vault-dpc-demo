@@ -128,4 +128,5 @@ resource "vault_aws_secret_backend" "vault_aws" {
   secret_key        = aws_iam_access_key.vault_aws_key.secret
   description       = "Demo of the AWS secrets engine"
   region            = var.region
+  username_template = "{{ if (eq .Type \"STS\") }}{{ printf \"vault-%s-%s-%s\" (.PolicyName) (unix_time) (random 20) | truncate 32 }}{{ else }}{{ printf \"vault-%s-%s-%s\" (.PolicyName) (unix_time) (random 20) | truncate 60 }}{{ end }}"
 }
