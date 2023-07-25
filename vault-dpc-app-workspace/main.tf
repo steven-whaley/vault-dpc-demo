@@ -3,7 +3,7 @@ locals {
 ${vault_pki_secret_backend_cert.myapp.certificate}
 ${vault_pki_secret_backend_cert.myapp.ca_chain}
   EOH
-  
+
   env_file = <<EOH
 DB_USER=${data.vault_kv_secret_v2.db_creds.data.admin_username}
 DB_PASSWORD=${data.vault_kv_secret_v2.db_creds.data.admin_password}

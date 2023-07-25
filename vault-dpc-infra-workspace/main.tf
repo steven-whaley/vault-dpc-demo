@@ -1,12 +1,12 @@
 resource "random_string" "db_password" {
-    length = 16
-    special = false
+  length  = 16
+  special = false
 }
 
 resource "random_string" "db_admin_name" {
-    length = 8
-    special = false
-    numeric = false
+  length  = 8
+  special = false
+  numeric = false
 }
 
 # Create VPC for AWS resources
@@ -85,18 +85,18 @@ resource "aws_db_subnet_group" "postgres" {
 }
 
 resource "aws_db_instance" "postgres" {
-  allocated_storage      = 10
-  db_name                = "myappdb"
-  engine                 = "postgres"
-  engine_version         = "12.15"
+  allocated_storage           = 10
+  db_name                     = "myappdb"
+  engine                      = "postgres"
+  engine_version              = "12.15"
   allow_major_version_upgrade = false
-  auto_minor_version_upgrade = false
-  instance_class         = "db.t3.micro"
-  username               = random_string.db_admin_name.result
-  password               = random_string.db_password.result
-  db_subnet_group_name   = aws_db_subnet_group.postgres.name
-  skip_final_snapshot    = true
-  vpc_security_group_ids = [module.rds-sec-group.security_group_id]
+  auto_minor_version_upgrade  = false
+  instance_class              = "db.t3.micro"
+  username                    = random_string.db_admin_name.result
+  password                    = random_string.db_password.result
+  db_subnet_group_name        = aws_db_subnet_group.postgres.name
+  skip_final_snapshot         = true
+  vpc_security_group_ids      = [module.rds-sec-group.security_group_id]
 
   tags = {
     Name = "myappdb"

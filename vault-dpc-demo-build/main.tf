@@ -23,23 +23,23 @@ resource "vault_kv_secret_backend_v2" "example" {
 # Create and configure PKI Secrets Engine
 # Create the Root CA
 resource "vault_mount" "pki_root" {
-  path = "pki_root"
-  type = "pki"
+  path        = "pki_root"
+  type        = "pki"
   description = "SWCloudlab Root CA"
 }
 
 resource "vault_pki_secret_backend_root_cert" "root_ca" {
-  backend               = vault_mount.pki_root.path
-  type                  = "internal"
-  common_name           = "SW Cloudlab Root CA"
-  ttl                   = 31557600
-  format                = "pem"
-  private_key_format    = "der"
-  key_type              = "rsa"
-  key_bits              = 4096
-  exclude_cn_from_sans  = true
-  ou                    = "Vault Dynamic Provider OU"
-  organization          = "swcloublab"
+  backend              = vault_mount.pki_root.path
+  type                 = "internal"
+  common_name          = "SW Cloudlab Root CA"
+  ttl                  = 31557600
+  format               = "pem"
+  private_key_format   = "der"
+  key_type             = "rsa"
+  key_bits             = 4096
+  exclude_cn_from_sans = true
+  ou                   = "Vault Dynamic Provider OU"
+  organization         = "swcloublab"
 }
 
 resource "vault_pki_secret_backend_config_urls" "root_urls" {
@@ -51,27 +51,27 @@ resource "vault_pki_secret_backend_config_urls" "root_urls" {
 
 # Create Intermediate CA
 resource "vault_mount" "pki_int" {
-  path = "pki_int"
-  type = "pki"
+  path        = "pki_int"
+  type        = "pki"
   description = "SWCloudLab Intermediate CA"
 }
 
 resource "vault_pki_secret_backend_intermediate_cert_request" "pki_int" {
-  depends_on = [ vault_mount.pki_root ]
+  depends_on  = [vault_mount.pki_root]
   backend     = vault_mount.pki_int.path
   type        = "internal"
   common_name = "SWCloudlab Intermediate CA"
 }
 
 resource "vault_pki_secret_backend_root_sign_intermediate" "int" {
-  depends_on           = [ vault_pki_secret_backend_intermediate_cert_request.pki_int ]
-  backend              = vault_mount.pki_root.path
-  csr                  = vault_pki_secret_backend_intermediate_cert_request.pki_int.csr
-  ttl = 7889400
-  common_name          = "SWCloudlab Intermediate CA"
-  ou                   = "Vault Dynamic Provider Lab"
-  organization         = "swcloudlab"
-  issuer_ref = "default"
+  depends_on   = [vault_pki_secret_backend_intermediate_cert_request.pki_int]
+  backend      = vault_mount.pki_root.path
+  csr          = vault_pki_secret_backend_intermediate_cert_request.pki_int.csr
+  ttl          = 7889400
+  common_name  = "SWCloudlab Intermediate CA"
+  ou           = "Vault Dynamic Provider Lab"
+  organization = "swcloudlab"
+  issuer_ref   = "default"
 }
 
 resource "vault_pki_secret_backend_intermediate_set_signed" "pki_int" {
@@ -105,18 +105,18 @@ resource "vault_policy" "aws" {
 
 # Create IAM user and keys that Vault can use to connect to AWS to generate short lived credentials
 resource "aws_iam_user" "vault_aws_user" {
-  name                 = "vault-aws-secrets-user"
-  force_destroy        = true
+  name          = "vault-aws-secrets-user"
+  force_destroy = true
 }
 
 resource "aws_iam_policy" "vault_aws_policy" {
-  name = "vault-aws-secrets-user-policy"
+  name   = "vault-aws-secrets-user-policy"
   policy = data.aws_iam_policy_document.vault_aws_secrets_user_policy.json
 }
 
 resource "aws_iam_user_policy_attachment" "vault_aws_user" {
   user       = aws_iam_user.vault_aws_user.name
-  policy_arn     = aws_iam_policy.vault_aws_policy.arn
+  policy_arn = aws_iam_policy.vault_aws_policy.arn
 }
 
 resource "aws_iam_access_key" "vault_aws_key" {

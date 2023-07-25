@@ -2,7 +2,7 @@ terraform {
   required_version = ">= 1.0"
   required_providers {
     vault = {
-        version = "3.18.0"
+      version = "3.18.0"
     }
     aws = {
       version = "5.4.0"
@@ -25,21 +25,21 @@ terraform {
 }
 
 provider "vault" {
-    namespace = "admin"  
-    address = var.vault_addr
+  namespace = "admin"
+  address   = var.vault_addr
 }
 
 provider "aws" {
-    region = var.region
+  region = var.region
 }
 
 provider "hcp" {
-    client_id = var.hcp_client_id
-    client_secret = var.hcp_client_secret
+  client_id     = var.hcp_client_id
+  client_secret = var.hcp_client_secret
 }
 
 provider "tfe" {
-    hostname = var.tfc_hostname
-    token = var.tfc_token
-    organization = var.tfc_organization_name
+  hostname     = var.tfc_hostname
+  token        = var.tfc_token
+  organization = var.tfc_organization_name
 }

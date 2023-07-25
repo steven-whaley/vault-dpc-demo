@@ -70,31 +70,31 @@ data "vault_policy_document" "vault_app_apply_policy" {
 }
 
 module "vault-dpc-app-workspace" {
-    source = "./workspace-setup"
+  source = "./workspace-setup"
 
-    tfc_organization_name = var.tfc_organization_name
-    tfc_project_name = var.tfc_project_name
-    tfc_workspace_name = local.app_workspace_name
+  tfc_organization_name = var.tfc_organization_name
+  tfc_project_name      = var.tfc_project_name
+  tfc_workspace_name    = local.app_workspace_name
 
-    # Set variables in the workspace to use Vault OIDC auth and Dynamic provider auth for AWS
-    vault_workspace_variables = {
-         "TFC_VAULT_ADDR" = var.vault_addr
-         "TFC_VAULT_AUTH_PATH" = vault_jwt_auth_backend.tfc_jwt.path
-         "TFC_VAULT_NAMESPACE" = "admin"
-         "TFC_VAULT_PROVIDER_AUTH" = "true"    
-         "TFC_VAULT_BACKED_AWS_AUTH" = "true"
-         "TFC_VAULT_BACKED_AWS_AUTH_TYPE" = "iam_user"
-         "TFC_VAULT_BACKED_AWS_PLAN_VAULT_ROLE" = "tf_${local.app_workspace_name}_plan_role"
-         "TFC_VAULT_BACKED_AWS_APPLY_VAULT_ROLE" = "tf_${local.app_workspace_name}_apply_role"
-         "TFC_VAULT_BACKED_AWS_MOUNT_PATH" = vault_aws_secret_backend.vault_aws.path   
-    }
+  # Set variables in the workspace to use Vault OIDC auth and Dynamic provider auth for AWS
+  vault_workspace_variables = {
+    "TFC_VAULT_ADDR"                        = var.vault_addr
+    "TFC_VAULT_AUTH_PATH"                   = vault_jwt_auth_backend.tfc_jwt.path
+    "TFC_VAULT_NAMESPACE"                   = "admin"
+    "TFC_VAULT_PROVIDER_AUTH"               = "true"
+    "TFC_VAULT_BACKED_AWS_AUTH"             = "true"
+    "TFC_VAULT_BACKED_AWS_AUTH_TYPE"        = "iam_user"
+    "TFC_VAULT_BACKED_AWS_PLAN_VAULT_ROLE"  = "tf_${local.app_workspace_name}_plan_role"
+    "TFC_VAULT_BACKED_AWS_APPLY_VAULT_ROLE" = "tf_${local.app_workspace_name}_apply_role"
+    "TFC_VAULT_BACKED_AWS_MOUNT_PATH"       = vault_aws_secret_backend.vault_aws.path
+  }
 
-    # Set the policy to be created for the TFC user accessing Vault
-    vault_plan_policy = data.vault_policy_document.vault_app_plan_policy.hcl
-    vault_apply_policy = data.vault_policy_document.vault_app_apply_policy.hcl
+  # Set the policy to be created for the TFC user accessing Vault
+  vault_plan_policy  = data.vault_policy_document.vault_app_plan_policy.hcl
+  vault_apply_policy = data.vault_policy_document.vault_app_apply_policy.hcl
 
-    # Set the policy to be used for the AWS user created by the aws secrets engine for this workspace
-    vault_aws_plan_policy_arns = [data.aws_iam_policy.ec2_read.arn, data.aws_iam_policy.vpc_read.arn, data.aws_iam_policy.rds_read.arn]
-    vault_aws_apply_policy_arns = [data.aws_iam_policy.ec2_all.arn]
-    aws_secrets_backend = vault_aws_secret_backend.vault_aws.path
+  # Set the policy to be used for the AWS user created by the aws secrets engine for this workspace
+  vault_aws_plan_policy_arns  = [data.aws_iam_policy.ec2_read.arn, data.aws_iam_policy.vpc_read.arn, data.aws_iam_policy.rds_read.arn]
+  vault_aws_apply_policy_arns = [data.aws_iam_policy.ec2_all.arn]
+  aws_secrets_backend         = vault_aws_secret_backend.vault_aws.path
 }

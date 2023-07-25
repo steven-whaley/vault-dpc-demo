@@ -7,22 +7,22 @@ data "hcp_packer_image" "myapp" {
 
 data "vault_kv_secret_v2" "db_creds" {
   mount = "kv"
-  name = "database_credentials"
+  name  = "database_credentials"
 }
 
 data "aws_vpc" "vpc_id" {
-    tags = {
-        Name = "vault-dpc-demo-vpc"
-    }
+  tags = {
+    Name = "vault-dpc-demo-vpc"
+  }
 }
 
 data "aws_subnets" "subnet_id" {
-    filter {
-        name   = "vpc-id"
-        values = [data.aws_vpc.vpc_id.id]
-     }
-    
-    tags = {
-        Public = "Yes"
-    }
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc_id.id]
+  }
+
+  tags = {
+    Public = "Yes"
+  }
 }
